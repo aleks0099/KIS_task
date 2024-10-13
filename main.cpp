@@ -75,12 +75,18 @@ void ClearPiles(vector<vector<int>>& card_piles){
   }
 }
 
+vector<vector<int>> SortPiles(const vector<vector<int>>& piles) {
+  vector<vector<int>> sorted_piles = piles;
+  std::sort(sorted_piles.begin(), sorted_piles.end());
+  return sorted_piles;
+}
+
 int BFS(queue<Element_dist>& q){
   // для проверки вошли ли в посещённую вершину
   unordered_set<vector<vector<int>>, Vector2Hash> visited;
   while(!q.empty()) {
     vector<vector<int>> card_piles = q.front().elem;
-    visited.insert(card_piles);
+    visited.insert(SortPiles(card_piles));
     int current_dist = q.front().dist;
     if (CheckWin(card_piles)){
       // при победе возвращаем глубину дерева (то есть количество шагов)
@@ -102,7 +108,7 @@ int BFS(queue<Element_dist>& q){
           next_card_piles[pile2].push_back(move_card);
           // удалили собранные стопки
           ClearPiles(next_card_piles);
-          auto it = visited.find(next_card_piles);
+          auto it = visited.find(SortPiles(next_card_piles));
           if (it != visited.end()) {
             // добавили в очередь новую вершину, если ещё не были в ней
             q.push(Element_dist{next_card_piles, current_dist+1});
